@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchNaverNews, fetchGoogleNews, NewsArticle } from '@/lib/scraper';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
     try {
+        if (!isSupabaseConfigured) {
+            throw new Error('Vercel 환경 변수가 설정되지 않았습니다. NEXT_PUBLIC_SUPABASE_URL 및 ANON_KEY를 확인해주세요.');
+        }
+
         // 1. DB에서 활성화된 키워드 목록 가져오기
         const { data: keywordRows, error: keywordError } = await supabase
             .from('keywords')

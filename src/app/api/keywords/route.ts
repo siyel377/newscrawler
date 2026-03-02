@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
 // 키워드 목록 가져오기
 export async function GET() {
     try {
+        if (!isSupabaseConfigured) {
+            throw new Error('Vercel 환경 변수가 설정되지 않았습니다.');
+        }
         const { data, error } = await supabase
             .from('keywords')
             .select('*')
