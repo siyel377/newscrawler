@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchNaverNews, fetchGoogleNews, NewsArticle } from '@/lib/scraper';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     try {
         // 1. DB에서 활성화된 키워드 목록 가져오기
@@ -11,7 +13,7 @@ export async function GET(req: NextRequest) {
 
         if (keywordError) throw keywordError;
 
-        const keywords = keywordRows.map(row => row.name);
+        const keywords = keywordRows.map((row: { name: string }) => row.name);
         if (keywords.length === 0) {
             return NextResponse.json({ success: true, count: 0, articles: [], message: '등록된 키워드가 없습니다.' });
         }
